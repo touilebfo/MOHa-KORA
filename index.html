@@ -1,159 +1,240 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MOHaKORA PRO</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-    <style>
-        :root { --red: #e11d48; --dark: #020617; --card: #1e293b; --text: #f8fafc; --green: #22c55e; }
-        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-        body { background: var(--dark); color: var(--text); margin: 0; padding-bottom: 80px; }
-        
-        header { background: #0f172a; padding: 20px; text-align: center; border-bottom: 4px solid var(--red); }
-        .logo { font-size: 24px; font-weight: 900; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MOHaKORA PRO MAX</title>
 
-        /* شريط الدوريات */
-        .leagues-nav { display: flex; overflow-x: auto; padding: 15px; gap: 10px; background: #0c111d; scrollbar-width: none; }
-        .lg-btn { background: #334155; color: #94a3b8; border: none; padding: 10px 20px; border-radius: 50px; cursor: pointer; white-space: nowrap; font-weight: bold; font-size: 13px; }
-        .lg-btn.active { background: var(--red); color: white; }
+<style>
+:root{
+--bg:#0a0f1f;
+--card:#141c2f;
+--primary:#ff2d55;
+--accent:#00ff9d;
+--text:#fff;
+}
 
-        .container { max-width: 500px; margin: auto; padding: 15px; }
-        
-        /* تصميم البطاقات */
-        .match-card { background: var(--card); border-radius: 15px; padding: 20px; margin-bottom: 12px; border: 1px solid #334155; }
-        .flex-row { display: flex; justify-content: space-between; align-items: center; }
-        .team { flex: 1; font-weight: bold; text-align: center; font-size: 14px; }
-        .score { font-size: 30px; font-weight: 900; color: var(--green); }
-        .status-label { font-size: 10px; font-weight: bold; padding: 4px 10px; border-radius: 5px; margin-top: 5px; display: inline-block; }
-        .fin { background: #475569; color: #f1f5f9; }
-        .liv { background: rgba(34, 197, 94, 0.2); color: var(--green); animation: pulse 1s infinite; }
+body{
+margin:0;
+font-family:Arial;
+background:var(--bg);
+color:var(--text);
+padding-bottom:80px;
+}
 
-        /* الهدافين */
-        .sc-row { display: flex; align-items: center; background: #0f172a; padding: 15px; border-radius: 10px; margin-bottom: 8px; border-right: 5px solid var(--red); }
-        .sc-num { font-weight: 900; color: var(--red); margin-left: 15px; font-size: 20px; }
-        .sc-name { flex: 1; font-weight: 700; }
-        .sc-goals { font-weight: 900; color: var(--green); font-size: 22px; }
+header{
+text-align:center;
+padding:15px;
+font-size:18px;
+font-weight:bold;
+background:#0f172a;
+border-bottom:2px solid var(--primary);
+position:sticky;
+top:0;
+}
 
-        /* ناف بار سفلي */
-        .b-nav { position: fixed; bottom: 0; width: 100%; background: #0f172a; display: flex; border-top: 1px solid #1e293b; height: 70px; }
-        .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #64748b; cursor: pointer; font-weight: bold; }
-        .nav-btn.active { color: var(--red); background: rgba(225, 29, 72, 0.05); border-top: 3px solid var(--red); }
+.topbar{
+display:flex;
+overflow-x:auto;
+gap:10px;
+padding:10px;
+background:#0c1222;
+}
 
-        .hide { display: none; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-    </style>
+.btn{
+padding:8px 15px;
+border-radius:20px;
+background:#1f2937;
+cursor:pointer;
+white-space:nowrap;
+font-size:12px;
+transition:0.3s;
+}
+
+.btn.active{
+background:var(--primary);
+}
+
+.container{
+max-width:500px;
+margin:auto;
+padding:10px;
+}
+
+.card{
+background:var(--card);
+padding:15px;
+border-radius:14px;
+margin-bottom:10px;
+box-shadow:0 5px 20px rgba(0,0,0,0.3);
+}
+
+.row{
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.team{
+flex:1;
+text-align:center;
+font-weight:bold;
+}
+
+.score{
+color:var(--accent);
+font-size:20px;
+font-weight:bold;
+background:#000;
+padding:5px 10px;
+border-radius:8px;
+}
+
+.status{
+font-size:11px;
+margin-top:6px;
+opacity:0.8;
+}
+
+.bottom{
+position:fixed;
+bottom:0;
+width:100%;
+display:flex;
+background:#0f172a;
+border-top:1px solid #1f2937;
+}
+
+.bottom div{
+flex:1;
+text-align:center;
+padding:15px;
+cursor:pointer;
+}
+
+.bottom .active{
+color:var(--primary);
+border-top:3px solid var(--primary);
+background:#111827;
+}
+</style>
 </head>
+
 <body>
 
-<header><div class="logo">⚽ MOHaKORA PRO</div></header>
+<header>⚽ MOHaKORA PRO MAX (LIVE)</header>
 
-<div class="leagues-nav">
-    <button class="lg-btn active" onclick="updateLeague('PL', this)">الدوري الإنجليزي</button>
-    <button class="lg-btn" onclick="updateLeague('PD', this)">الدوري الإسباني</button>
-    <button class="lg-btn" onclick="updateLeague('SA', this)">الدوري الإيطالي</button>
-    <button class="lg-btn" onclick="updateLeague('BL1', this)">الدوري الألماني</button>
-    <button class="lg-btn" onclick="updateLeague('FL1', this)">الدوري الفرنسي</button>
+<div class="topbar">
+<div class="btn active" onclick="setLeague(4328,this)">إنجلترا</div>
+<div class="btn" onclick="setLeague(4335,this)">إسبانيا</div>
+<div class="btn" onclick="setLeague(4332,this)">إيطاليا</div>
+<div class="btn" onclick="setLeague(4331,this)">ألمانيا</div>
 </div>
 
-<div class="container" id="matches-area">
-    <div style="text-align:center; padding:50px; opacity:0.6;">جاري تحميل النتائج المتقنة...</div>
-</div>
+<div class="container" id="content">جاري التحميل...</div>
 
-<div class="container hide" id="scorers-area">
-    <div style="text-align:center; padding:50px; opacity:0.6;">جاري جلب الهدافين...</div>
+<div class="bottom">
+<div class="active" onclick="showMatches(this)">⚽ المباريات</div>
+<div onclick="showScorers(this)">🏆 الهدافين</div>
 </div>
-
-<nav class="b-nav">
-    <div class="nav-btn active" onclick="switchView('m', this)">🏟️ النتائج</div>
-    <div class="nav-btn" onclick="switchView('s', this)">🏆 الهدافين</div>
-</nav>
 
 <script>
-    const API_KEY = "61691e4b6b644580a8a3483b4261a07b";
-    // استخدام وسيط AllOrigins مع إضافة timestamp لكسر الكاش وضمان التحديث
-    const PROXY = "https://api.allorigins.win/get?url=";
-    let currentLg = 'PL';
 
-    async function getApiData(path) {
-        const timestamp = new Date().getTime();
-        const url = `${PROXY}${encodeURIComponent('https://api.football-data.org/v4' + path + '?t=' + timestamp)}`;
-        const response = await fetch(url, {
-            headers: { 'X-Auth-Token': API_KEY }
-        });
-        const json = await response.json();
-        return JSON.parse(json.contents);
-    }
+let leagueId = 4328;
+let mode = "matches";
 
-    async function loadMatches() {
-        const area = document.getElementById('matches-area');
-        try {
-            const data = await getApiData(`/competitions/${currentLg}/matches`);
-            const today = new Date().toISOString().split('T')[0];
-            const matches = data.matches.filter(m => m.utcDate.includes(today));
+// 🔥 تحديث تلقائي كل 30 ثانية
+setInterval(() => {
+if(mode === "matches") loadMatches();
+else loadScorers();
+}, 30000);
 
-            if(matches.length === 0) {
-                area.innerHTML = "<div style='text-align:center; padding:40px;'>لا توجد مباريات جارية اليوم.</div>";
-                return;
-            }
+// ================== مباريات ==================
+async function loadMatches(){
+mode="matches";
 
-            area.innerHTML = matches.map(m => `
-                <div class="match-card">
-                    <div class="flex-row">
-                        <div class="team">${m.homeTeam.shortName}</div>
-                        <div style="text-align:center; flex:1;">
-                            <div class="score">${m.score.fullTime.home ?? 0} - ${m.score.fullTime.away ?? 0}</div>
-                            <span class="status-label ${m.status==='FINISHED'?'fin':'liv'}">
-                                ${m.status==='FINISHED'?'منتهية':'مباشر / قريباً'}
-                            </span>
-                        </div>
-                        <div class="team">${m.awayTeam.shortName}</div>
-                    </div>
-                </div>
-            `).join('');
-        } catch(e) { area.innerHTML = "فشل التحميل. تأكد من اتصالك."; }
-    }
+const res = await fetch(`https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=${leagueId}`);
+const data = await res.json();
 
-    async function loadScorers() {
-        const area = document.getElementById('scorers-area');
-        try {
-            const data = await getApiData(`/competitions/${currentLg}/scorers`);
-            area.innerHTML = data.scorers.map((s, i) => `
-                <div class="sc-row">
-                    <div class="sc-num">${i+1}</div>
-                    <div class="sc-name">
-                        <div>${s.player.name}</div>
-                        <div style="font-size:11px; color:#64748b;">${s.team.name}</div>
-                    </div>
-                    <div class="sc-goals">${s.goals}</div>
-                </div>
-            `).join('');
-        } catch(e) { area.innerHTML = "تعذر جلب قائمة الهدافين حالياً."; }
-    }
+const box = document.getElementById("content");
 
-    function updateLeague(code, btn) {
-        document.querySelectorAll('.lg-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentLg = code;
-        loadMatches();
-        loadScorers();
-    }
+if(!data.events){
+box.innerHTML = "لا توجد مباريات حالياً";
+return;
+}
 
-    function switchView(type, btn) {
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        if(type === 'm') {
-            document.getElementById('matches-area').classList.remove('hide');
-            document.getElementById('scorers-area').classList.add('hide');
-            loadMatches();
-        } else {
-            document.getElementById('matches-area').classList.add('hide');
-            document.getElementById('scorers-area').classList.remove('hide');
-            loadScorers();
-        }
-    }
+box.innerHTML = data.events.map(m => `
+<div class="card">
+<div class="row">
+<div class="team">${m.strHomeTeam}</div>
 
-    window.onload = loadMatches;
+<div>
+<div class="score">${m.intHomeScore ?? 0} - ${m.intAwayScore ?? 0}</div>
+<div class="status">${m.strStatus || "قادم"}</div>
+</div>
+
+<div class="team">${m.strAwayTeam}</div>
+</div>
+
+<div style="text-align:center;font-size:11px;opacity:0.6;margin-top:5px">
+📅 ${m.dateEvent} ⏰ ${m.strTime}
+</div>
+</div>
+`).join("");
+}
+
+// ================== هدافين ==================
+async function loadScorers(){
+mode="scorers";
+
+const res = await fetch(`https://www.thesportsdb.com/api/v1/json/3/lookuptopscorers.php?id=${leagueId}`);
+const data = await res.json();
+
+const box = document.getElementById("content");
+
+if(!data.scorers){
+box.innerHTML = "لا توجد بيانات هدافين";
+return;
+}
+
+box.innerHTML = data.scorers.map((s,i)=>`
+<div class="card">
+<div class="row">
+<div>${i+1}. ${s.strPlayer}</div>
+<div class="score">${s.intGoals} ⚽</div>
+</div>
+<div style="font-size:12px;opacity:0.7">${s.strTeam}</div>
+</div>
+`).join("");
+}
+
+// ================== تغيير الدوري ==================
+function setLeague(id,el){
+leagueId = id;
+
+document.querySelectorAll(".btn").forEach(b=>b.classList.remove("active"));
+el.classList.add("active");
+
+loadMatches();
+}
+
+// ================== التبديل ==================
+function showMatches(el){
+document.querySelectorAll(".bottom div").forEach(b=>b.classList.remove("active"));
+el.classList.add("active");
+loadMatches();
+}
+
+function showScorers(el){
+document.querySelectorAll(".bottom div").forEach(b=>b.classList.remove("active"));
+el.classList.add("active");
+loadScorers();
+}
+
+// تشغيل أولي
+loadMatches();
+
 </script>
+
 </body>
 </html>
