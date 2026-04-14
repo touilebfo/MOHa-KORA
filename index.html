@@ -5,37 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MOHaKORA PRO</title>
     <style>
-        body { background-color: #070b18; color: white; font-family: sans-serif; text-align: center; padding: 20px; margin: 0; }
-        .header { font-size: 28px; color: #ff2d2d; font-weight: bold; padding: 20px; border-bottom: 2px solid #ff2d2d; margin-bottom: 20px; }
-        .match-card { background: #161e2e; padding: 15px; border-radius: 12px; margin: 10px auto; max-width: 450px; border: 1px solid #2d3748; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        .league { font-size: 12px; color: #888; margin-bottom: 8px; }
-        .score { font-size: 22px; color: #00ff99; font-weight: bold; }
-        .loading { color: #ff2d2d; font-size: 18px; margin-top: 50px; }
+        body { background: #070b18; color: white; font-family: sans-serif; text-align: center; margin: 0; padding: 20px; }
+        .header { font-size: 26px; color: #ff2d2d; font-weight: bold; margin-bottom: 20px; border-bottom: 2px solid #ff2d2d; padding-bottom: 10px; }
+        .card { background: #161e2e; padding: 15px; border-radius: 12px; margin: 10px auto; max-width: 400px; border: 1px solid #2d3748; }
+        .score { font-size: 20px; color: #00ff99; font-weight: bold; margin: 0 10px; }
+        .loading { color: #ff2d2d; animation: blink 1s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
     <div class="header">⚽ MOHaKORA PRO</div>
-    <div id="content"><div class="loading">جاري تحديث النتائج المباشرة...</div></div>
+    <div id="content"><div class="loading">جاري جلب مباريات اليوم...</div></div>
 
     <script>
-        const API_KEY = '61691e4b6b644580a8a3483b4261a07b';
-        // الرابط مع الوسيط لتخطي الحجب
-        const URL = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.football-data.org/v4/matches');
-
         async function getMatches() {
+            const API_KEY = '61691e4b6b644580a8a3483b4261a07b';
+            // استخدام وسيط AllOrigins الموثوق
+            const targetUrl = 'https://api.football-data.org/v4/matches';
+            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+
             try {
-                const response = await fetch(URL);
+                const response = await fetch(proxyUrl);
                 const result = await response.json();
-                // فك تشفير البيانات القادمة من الوسيط
-                const data = JSON.parse(result.contents);
-                
-                const container = document.getElementById('content');
-                
+                const data = JSON.parse(result.contents); // تفريغ البيانات من الوسيط
+
+                const box = document.getElementById('content');
                 if (data.matches && data.matches.length > 0) {
-                    container.innerHTML = data.matches.map(m => `
-                        <div class="match-card">
-                            <div class="league">${m.competition.name}</div>
-                            <div style="display:flex; justify-content:space-around; align-items:center;">
+                    box.innerHTML = data.matches.map(m => `
+                        <div class="card">
+                            <div style="font-size:11px; color:#888;">${m.competition.name}</div>
+                            <div style="display:flex; justify-content:center; align-items:center; margin-top:10px;">
                                 <span>${m.homeTeam.shortName}</span>
                                 <span class="score">${m.score.fullTime.home ?? 0} - ${m.score.fullTime.away ?? 0}</span>
                                 <span>${m.awayTeam.shortName}</span>
@@ -43,10 +42,11 @@
                         </div>
                     `).join('');
                 } else {
-                    container.innerHTML = "<p>لا توجد مباريات جارية حالياً.</p>";
+                    box.innerHTML = "<div class='card'>لا توجد مباريات جارية حالياً.</div>";
                 }
             } catch (error) {
-                document.getElementById('content').innerHTML = "<p>فشل في تحديث البيانات. حاول مرة أخرى.</p>";
+                console.error(error);
+                document.getElementById('content').innerHTML = "فشل الاتصال. حاول تحديث الصفحة بعد دقيقة.";
             }
         }
         getMatches();
