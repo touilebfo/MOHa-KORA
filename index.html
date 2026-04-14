@@ -3,178 +3,206 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MOHAKORA PRO MAX</title>
+<title>Bundesliga PRO MAX</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
 
 <style>
-:root{
-  --bg:#0d1117;
-  --card:#161b22;
-  --text:#f0f6fc;
-  --red:#ff3b3b;
-  --green:#2ecc71;
-}
-
 body{
-  margin:0;
-  font-family:Cairo;
-  background:var(--bg);
-  color:var(--text);
+margin:0;
+font-family:Cairo;
+background:#0d1117;
+color:#fff;
 }
 
 header{
-  padding:18px;
-  text-align:center;
-  font-size:22px;
-  font-weight:900;
-  background:#010409;
-  border-bottom:2px solid var(--red);
+padding:18px;
+text-align:center;
+font-size:22px;
+font-weight:900;
+background:#010409;
+border-bottom:2px solid #ff3b3b;
 }
 
 .tabs{
-  display:flex;
-  overflow-x:auto;
-  gap:10px;
-  padding:10px;
+display:flex;
+gap:8px;
+padding:10px;
+overflow-x:auto;
+background:#161b22;
 }
 
 .tab{
-  padding:8px 14px;
-  background:#21262d;
-  border:1px solid #30363d;
-  border-radius:20px;
-  cursor:pointer;
-  white-space:nowrap;
+padding:8px 14px;
+background:#21262d;
+border:1px solid #30363d;
+border-radius:20px;
+cursor:pointer;
+white-space:nowrap;
+font-weight:700;
 }
 
 .tab.active{
-  background:var(--red);
+background:#ff3b3b;
 }
 
 .box{
-  margin:10px;
-  padding:12px;
-  background:var(--card);
-  border-radius:12px;
-  border:1px solid #30363d;
+margin:10px;
+padding:12px;
+background:#161b22;
+border-radius:12px;
 }
 
 .item{
-  padding:10px;
-  border-bottom:1px solid #30363d;
+padding:10px;
+border-bottom:1px solid #30363d;
 }
 
 .row{
-  display:flex;
-  justify-content:space-between;
-  font-weight:900;
+display:flex;
+justify-content:space-between;
+font-weight:900;
 }
 
-.small{
-  font-size:12px;
-  color:#aaa;
-}
+.small{font-size:12px;color:#aaa}
+.green{color:#2ecc71}
+.gold{color:#f1c40f}
+.red{color:#ff3b3b}
 </style>
 </head>
 
 <body>
 
-<header>⚽ MOHAKORA PRO MAX</header>
+<header>⚽ Bundesliga PRO MAX</header>
 
 <div class="tabs">
-  <div class="tab active" onclick="setLeague('PL')">🇬🇧 PL</div>
-  <div class="tab" onclick="setLeague('PD')">🇪🇸 PD</div>
-  <div class="tab" onclick="setLeague('SA')">🇮🇹 SA</div>
-  <div class="tab" onclick="setLeague('BL1')">🇩🇪 BL1</div>
-  <div class="tab" onclick="setLeague('FL1')">🇫🇷 FL1</div>
+<div class="tab active" onclick="setView('today',this)">اليوم</div>
+<div class="tab" onclick="setView('yesterday',this)">أمس</div>
+<div class="tab" onclick="setView('tomorrow',this)">غداً</div>
+<div class="tab" onclick="setView('table',this)">الترتيب</div>
+<div class="tab" onclick="setView('scorers',this)">الهدافين</div>
 </div>
 
-<div id="matches" class="box">جاري تحميل المباريات...</div>
-<div id="table" class="box">جاري تحميل الترتيب...</div>
+<div id="app" class="box">جاري التحميل...</div>
 
 <script>
-const API_KEY = "PUT_YOUR_API_KEY_HERE";
 
-let league = "PL";
+let view="today";
 
-/* 🔥 API CORE */
-async function fetchAPI(url){
-  const res = await fetch("https://api.football-data.org/v4" + url, {
-    headers: { "X-Auth-Token": API_KEY }
-  });
-
-  if(!res.ok){
-    throw new Error("API ERROR " + res.status);
-  }
-
-  return await res.json();
+/* 🔥 API */
+async function getMatches(){
+const res=await fetch("https://api.openligadb.de/getmatchdata/bl1/2026");
+return await res.json();
 }
 
-/* 🏟️ MATCHES */
-async function loadMatches(){
-  const div = document.getElementById("matches");
-  div.innerHTML = "جاري تحميل المباريات...";
-
-  try{
-    const data = await fetchAPI(`/competitions/${league}/matches`);
-
-    const matches = data.matches.slice(0, 10);
-
-    div.innerHTML = "<h3>🏟️ المباريات</h3>" +
-    matches.map(m => `
-      <div class="item">
-        <div class="small">${m.utcDate}</div>
-        <div class="row">
-          <span>${m.homeTeam.name}</span>
-          <span>${m.score.fullTime.home ?? 0} - ${m.score.fullTime.away ?? 0}</span>
-          <span>${m.awayTeam.name}</span>
-        </div>
-      </div>
-    `).join("");
-
-  }catch(e){
-    div.innerHTML = "خطأ في تحميل المباريات ⚠️";
-  }
+async function getTable(){
+const res=await fetch("https://api.openligadb.de/getbltable/bl1");
+return await res.json();
 }
 
-/* 📊 STANDINGS */
-async function loadTable(){
-  const div = document.getElementById("table");
-  div.innerHTML = "جاري تحميل الترتيب...";
-
-  try{
-    const data = await fetchAPI(`/competitions/${league}/standings`);
-
-    const table = data.standings[0].table;
-
-    div.innerHTML = "<h3>📊 الترتيب</h3>" +
-    table.map((t,i)=>`
-      <div class="item">
-        <div class="row">
-          <span>${i+1}. ${t.team.name}</span>
-          <span style="color:var(--green)">${t.points} pt</span>
-        </div>
-      </div>
-    `).join("");
-
-  }catch(e){
-    div.innerHTML = "خطأ في تحميل الترتيب ⚠️";
-  }
+async function getScorers(){
+const res=await fetch("https://api.openligadb.de/getgoalgetters/bl1/2024");
+return await res.json();
 }
 
-/* 🔁 SWITCH LEAGUE */
-function setLeague(l){
-  league = l;
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  event.target.classList.add('active');
+/* 📅 DATE */
+function getDate(type){
+const d=new Date();
 
-  loadMatches();
-  loadTable();
+if(type==="today") return d.toISOString().split("T")[0];
+
+if(type==="yesterday"){
+d.setDate(d.getDate()-1);
+return d.toISOString().split("T")[0];
 }
 
-loadMatches();
-loadTable();
+if(type==="tomorrow"){
+d.setDate(d.getDate()+1);
+return d.toISOString().split("T")[0];
+}
+}
+
+/* 🏟️ FILTER */
+function filterByDate(data,type){
+const target=getDate(type);
+
+return data.filter(m=>{
+const date=m.matchDateTime?.split("T")[0];
+return date===target;
+});
+}
+
+/* 🔁 LOAD */
+async function load(){
+
+const app=document.getElementById("app");
+app.innerHTML="جاري التحميل...";
+
+if(view==="table"){
+const data=await getTable();
+
+app.innerHTML=data.map((t,i)=>`
+<div class="item">
+<div class="row">
+<span>${i+1}. ${t.teamName}</span>
+<span class="green">${t.points} pt</span>
+</div>
+</div>
+`).join("");
+return;
+}
+
+if(view==="scorers"){
+const data=await getScorers();
+
+app.innerHTML=data.slice(0,15).map((s,i)=>`
+<div class="item">
+<div class="row">
+<span>${i+1}. ${s.goalGetterName}</span>
+<span class="gold">${s.goalCount} ⚽</span>
+</div>
+</div>
+`).join("");
+return;
+}
+
+const data=await getMatches();
+const filtered=filterByDate(data,view);
+
+if(filtered.length===0){
+app.innerHTML="<p class='red'>لا توجد مباريات لهذا اليوم</p>";
+return;
+}
+
+app.innerHTML=filtered.slice(0,10).map(m=>`
+<div class="item">
+<div class="small">${m.matchDateTime}</div>
+<div class="row">
+<span>${m.team1.teamName}</span>
+<span class="gold">
+${m.matchResults?.slice(-1)[0]?.pointsTeam1 ?? 0}
+-
+${m.matchResults?.slice(-1)[0]?.pointsTeam2 ?? 0}
+</span>
+<span>${m.team2.teamName}</span>
+</div>
+</div>
+`).join("");
+}
+
+/* 🔁 SWITCH */
+function setView(v,el){
+view=v;
+document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+el.classList.add("active");
+load();
+}
+
+/* 🔄 AUTO REFRESH (Live feel) */
+setInterval(load,30000);
+
+load();
+
 </script>
 
 </body>
