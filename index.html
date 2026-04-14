@@ -3,53 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MOHaKORA PRO</title>
+    <title>MOHaKORA PRO | الهدافين والنتائج</title>
     <style>
-        body { background: #070b18; color: white; font-family: sans-serif; text-align: center; margin: 0; padding: 20px; }
-        .header { font-size: 26px; color: #ff2d2d; font-weight: bold; margin-bottom: 20px; border-bottom: 2px solid #ff2d2d; padding-bottom: 10px; }
-        .card { background: #161e2e; padding: 15px; border-radius: 12px; margin: 10px auto; max-width: 400px; border: 1px solid #2d3748; }
-        .score { font-size: 20px; color: #00ff99; font-weight: bold; margin: 0 10px; }
-        .loading { color: #ff2d2d; animation: blink 1s infinite; }
+        :root { --primary: #ff2d2d; --bg: #070b18; --card: #161e2e; --accent: #00ff99; }
+        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; padding-bottom: 70px; }
+        header { background: #0f172a; padding: 15px; text-align: center; border-bottom: 3px solid var(--primary); font-size: 22px; font-weight: bold; position: sticky; top: 0; z-index: 100; }
+        .container { max-width: 600px; margin: auto; padding: 10px; }
+        
+        /* تصميم كرت المباراة */
+        .match-card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid #2d3748; }
+        .league-title { font-size: 11px; color: #888; margin-bottom: 8px; border-bottom: 1px solid #222; padding-bottom: 4px; }
+        .teams-row { display: flex; justify-content: space-between; align-items: center; }
+        .score { font-size: 20px; font-weight: bold; color: var(--accent); background: #000; padding: 4px 12px; border-radius: 6px; }
+        
+        /* تصميم قائمة الهدافين */
+        .scorer-row { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #222; align-items: center; }
+        .scorer-name { font-weight: bold; color: #fff; }
+        .scorer-goals { color: var(--accent); font-weight: bold; font-size: 18px; }
+
+        /* شريط التنقل السفلي */
+        .nav-bar { position: fixed; bottom: 0; width: 100%; background: #0f172a; display: flex; justify-content: space-around; padding: 10px 0; border-top: 2px solid var(--primary); }
+        .nav-item { color: #888; text-decoration: none; font-size: 14px; cursor: pointer; transition: 0.3s; }
+        .nav-item.active { color: var(--primary); font-weight: bold; }
+
+        .hidden { display: none; }
+        .status-live { color: var(--accent); animation: blink 1s infinite; font-size: 10px; }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
-    <div class="header">⚽ MOHaKORA PRO</div>
-    <div id="content"><div class="loading">جاري جلب مباريات اليوم...</div></div>
 
-    <script>
-        async function getMatches() {
-            const API_KEY = '61691e4b6b644580a8a3483b4261a07b';
-            // استخدام وسيط AllOrigins الموثوق
-            const targetUrl = 'https://api.football-data.org/v4/matches';
-            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+<header id="page-title">نتائج المباريات</header>
 
-            try {
-                const response = await fetch(proxyUrl);
-                const result = await response.json();
-                const data = JSON.parse(result.contents); // تفريغ البيانات من الوسيط
+<div class="container" id="matches-section">
+    <div style="text-align:center; padding:50px;">جاري جلب المباريات...</div>
+</div>
 
-                const box = document.getElementById('content');
-                if (data.matches && data.matches.length > 0) {
-                    box.innerHTML = data.matches.map(m => `
-                        <div class="card">
-                            <div style="font-size:11px; color:#888;">${m.competition.name}</div>
-                            <div style="display:flex; justify-content:center; align-items:center; margin-top:10px;">
-                                <span>${m.homeTeam.shortName}</span>
-                                <span class="score">${m.score.fullTime.home ?? 0} - ${m.score.fullTime.away ?? 0}</span>
-                                <span>${m.awayTeam.shortName}</span>
+<div class="container hidden" id="scorers-section">
+    <div style="text-align:center; padding:50px;">جاري جلب الهدافين...</div>
+</div>
+
+<nav class="nav-bar">
+    <div class="nav-item active" onclick="showTab('matches')">⚽ المباريات</div>
+    <div class="nav-item" onclick="showTab('scorers')">🏆 الهدافين</div>
+</nav>
+
+<script>
+    const API_KEY = '61691e4b6b644580a8a3483b4261a07b';
+    const PROXY = 'https://api.allorigins.win/get?url=';
+
+    function showTab(tab) {
+        document.getElementById('matches-section').classList.add('hidden');
+        document.getElementById('scorers-section').classList.add('hidden');
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+        if(tab === 'matches') {
+            document.getElementById('matches-section').classList.remove('hidden');
+            document.getElementById('page-title').innerText = "نتائج المباريات";
+            document.querySelectorAll('.nav-item')[0].classList.add('active');
+            getMatches();
+        } else {
+            document.getElementById('scorers-section').classList.remove('hidden');
+            document.getElementById('page-title').innerText = "هدافين الدوري الإنجليزي";
+            document.querySelectorAll('.nav-item')[1].classList.add('active');
+            getScorers();
+        }
+    }
+
+    async function getMatches() {
+        const url = PROXY + encodeURIComponent('https://api.football-data.org/v4/matches');
+        try {
+            const res = await fetch(url);
+            const raw = await res.json();
+            const data = JSON.parse(raw.contents);
+            const box = document.getElementById('matches-section');
+            
+            if (!data.matches || data.matches.length === 0) {
+                box.innerHTML = "<p style='text-align:center;'>لا توجد مباريات اليوم.</p>";
+                return;
+            }
+
+            box.innerHTML = data.matches.map(m => `
+                <div class="match-card">
+                    <div class="league-title">${m.competition.name}</div>
+                    <div class="teams-row">
+                        <div style="flex:1;">${m.homeTeam.shortName}</div>
+                        <div style="text-align:center; flex:1;">
+                            <span class="score">${m.score.fullTime.home ?? 0} - ${m.score.fullTime.away ?? 0}</span>
+                            <div class="${m.status === 'IN_PLAY' ? 'status-live' : ''}" style="font-size:10px; margin-top:5px;">
+                                ${m.status === 'FINISHED' ? 'منتهية' : (m.status === 'IN_PLAY' ? 'مباشر' : 'قريباً')}
                             </div>
                         </div>
-                    `).join('');
-                } else {
-                    box.innerHTML = "<div class='card'>لا توجد مباريات جارية حالياً.</div>";
-                }
-            } catch (error) {
-                console.error(error);
-                document.getElementById('content').innerHTML = "فشل الاتصال. حاول تحديث الصفحة بعد دقيقة.";
-            }
-        }
-        getMatches();
-    </script>
+                        <div style="flex:1; text-align:left;">${m.awayTeam.shortName}</div>
+                    </div>
+                </div>
+            `).join('');
+        } catch (e) { console.error(e); }
+    }
+
+    async function getScorers() {
+        // جلب هدافي الدوري الإنجليزي (PL) كمثال
+        const url = PROXY + encodeURIComponent('https://api.football-data.org/v4/competitions/PL/scorers');
+        try {
+            const res = await fetch(url);
+            const raw = await res.json();
+            const data = JSON.parse(raw.contents);
+            const box = document.getElementById('scorers-section');
+
+            box.innerHTML = data.scorers.map((s, index) => `
+                <div class="scorer-row">
+                    <div>
+                        <span style="color:#888; margin-left:10px;">${index + 1}</span>
+                        <span class="scorer-name">${s.player.name}</span>
+                        <div style="font-size:10px; color:#666;">${s.team.name}</div>
+                    </div>
+                    <div class="scorer-goals">${s.goals} ⚽</div>
+                </div>
+            `).join('');
+        } catch (e) { console.error(e); }
+    }
+
+    // تشغيل جلب المباريات عند الفتح
+    getMatches();
+</script>
+
 </body>
 </html>
