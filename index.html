@@ -1,1 +1,46 @@
 
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOHaKORA PRO</title>
+    <style>
+        body { background-color: #070b18; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
+        .header { font-size: 24px; color: #ff2d2d; font-weight: bold; margin-bottom: 20px; }
+        .match-card { background: #161e2e; padding: 15px; border-radius: 10px; margin: 10px auto; max-width: 400px; border: 1px solid #2d3748; }
+        .loading { color: #00ff99; }
+    </style>
+</head>
+<body>
+    <div class="header">MOHaKORA PRO ⚽</div>
+    <div id="content"><div class="loading">جاري جلب المباريات الحالية...</div></div>
+
+    <script>
+        const API_KEY = '61691e4b6b644580a8a3483b4261a07b';
+        async function getMatches() {
+            try {
+                const response = await fetch('https://api.football-data.org/v4/matches', {
+                    headers: { 'X-Auth-Token': API_KEY }
+                });
+                const data = await response.json();
+                const container = document.getElementById('content');
+                
+                if (data.matches && data.matches.length > 0) {
+                    container.innerHTML = data.matches.map(m => `
+                        <div class="match-card">
+                            <p>${m.competition.name}</p>
+                            <p>${m.homeTeam.shortName} ${m.score.fullTime.home ?? 0} - ${m.score.fullTime.away ?? 0} ${m.awayTeam.shortName}</p>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = "لا توجد مباريات مباشرة حالياً.";
+                }
+            } catch (error) {
+                document.getElementById('content').innerHTML = "حدث خطأ في الاتصال بالبيانات.";
+            }
+        }
+        getMatches();
+    </script>
+</body>
+</html>
