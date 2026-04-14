@@ -20,7 +20,7 @@
         const API_KEY = '61691e4b6b644580a8a3483b4261a07b';
         async function getMatches() {
             try {
-                const response = await fetch('https://api.football-data.org/v4/matches', {
+                const response = await fetch('https://corsproxy.io/?', {
                     headers: { 'X-Auth-Token': API_KEY }
                 });
                 const data = await response.json();
