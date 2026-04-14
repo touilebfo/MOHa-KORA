@@ -1,126 +1,164 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MOHaKORA PRO</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
-    <style>
-        :root { --red: #ff3131; --bg: #0d1117; --card: #161b22; --text: #f0f6fc; }
-        body { background: var(--bg); color: var(--text); font-family: 'Cairo', sans-serif; margin: 0; padding-bottom: 70px; }
-        header { background: #010409; padding: 20px; text-align: center; border-bottom: 2px solid var(--red); font-size: 22px; font-weight: 900; }
-        
-        .tabs { display: flex; overflow-x: auto; padding: 10px; gap: 8px; background: #0d1117; }
-        .tab-btn { background: #21262d; color: #8b949e; border: 1px solid #30363d; padding: 8px 16px; border-radius: 20px; white-space: nowrap; cursor: pointer; font-weight: bold; }
-        .tab-btn.active { background: var(--red); color: white; border-color: var(--red); }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MOHaKORA PRO V2</title>
 
-        .content { padding: 15px; min-height: 400px; }
-        .match-box { background: var(--card); border: 1px solid #30363d; border-radius: 12px; padding: 15px; margin-bottom: 12px; text-align: center; }
-        .score-row { display: flex; justify-content: space-around; align-items: center; font-size: 24px; font-weight: 900; color: #3fb950; margin: 10px 0; }
-        
-        .scorer-row { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #30363d; font-size: 14px; }
-        .rank { color: var(--red); font-weight: 900; margin-left: 10px; }
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
 
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #010409; display: flex; border-top: 1px solid #30363d; }
-        .nav-btn { flex: 1; padding: 15px; text-align: center; color: #8b949e; cursor: pointer; font-weight: 900; }
-        .nav-btn.active { color: var(--red); border-top: 3px solid var(--red); background: rgba(255,49,49,0.05); }
-        .hide { display: none; }
-    </style>
+<style>
+:root{
+  --bg:#0d1117;
+  --card:#161b22;
+  --text:#f0f6fc;
+  --red:#ff3b3b;
+  --green:#2ecc71;
+}
+
+body{
+  margin:0;
+  font-family:Cairo;
+  background:var(--bg);
+  color:var(--text);
+}
+
+header{
+  text-align:center;
+  padding:18px;
+  font-size:22px;
+  font-weight:900;
+  background:#010409;
+  border-bottom:2px solid var(--red);
+}
+
+.tabs{
+  display:flex;
+  overflow-x:auto;
+  gap:10px;
+  padding:10px;
+}
+
+.tab{
+  padding:8px 14px;
+  background:#21262d;
+  border:1px solid #30363d;
+  border-radius:20px;
+  cursor:pointer;
+  white-space:nowrap;
+  font-weight:700;
+}
+
+.tab.active{
+  background:var(--red);
+}
+
+.box{
+  margin:10px;
+  padding:12px;
+  background:var(--card);
+  border-radius:12px;
+  border:1px solid #30363d;
+}
+
+.match{
+  padding:10px;
+  border-bottom:1px solid #30363d;
+}
+
+.score{
+  font-size:20px;
+  font-weight:900;
+  color:var(--green);
+  display:flex;
+  justify-content:space-between;
+}
+
+.small{
+  font-size:12px;
+  color:#aaa;
+}
+
+</style>
 </head>
+
 <body>
 
-<header>⚽ MOHaKORA PRO</header>
+<header>⚽ MOHAKORA PRO V2</header>
 
 <div class="tabs">
-    <button class="tab-btn active" onclick="setLeague('PL', this)">الإنجليزي</button>
-    <button class="tab-btn" onclick="setLeague('PD', this)">الإسباني</button>
-    <button class="tab-btn" onclick="setLeague('SA', this)">الإيطالي</button>
-    <button class="tab-btn" onclick="setLeague('BL1', this)">الألماني</button>
-    <button class="tab-btn" onclick="setLeague('FL1', this)">الفرنسي</button>
+  <div class="tab active" onclick="setLeague('germany')">🇩🇪 البوندسليغا</div>
+  <div class="tab" onclick="setLeague('mock')">🌍 باقي الدوريات</div>
 </div>
 
-<div id="m-view" class="content">جاري تحميل النتائج...</div>
-<div id="s-view" class="content hide">جاري تحميل الهدافين...</div>
-
-<nav class="bottom-nav">
-    <div class="nav-btn active" onclick="show('m', this)">🏟️ النتائج</div>
-    <div class="nav-btn" onclick="show('s', this)">🔥 الهدافين</div>
-</nav>
+<div id="app" class="box">جاري التحميل...</div>
 
 <script>
-    const API_KEY = "61691e4b6b644580a8a3483b4261a07b";
-    let league = "PL";
+let league = "germany";
 
-    // استخدام وسيط جلب بيانات (Proxy) أكثر استقراراً
-    async function fetchJSON(path) {
-        const url = `https://api.allorigins.win/get?url=${encodeURIComponent('https://api.football-data.org/v4' + path)}`;
-        const response = await fetch(url);
-        const data = await response.json();
-        return JSON.parse(data.contents);
+function setLeague(l){
+  league = l;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  event.target.classList.add('active');
+  load();
+}
+
+/* 🔥 API حقيقي بدون مفتاح */
+async function loadGermany(){
+  const res = await fetch("https://api.openligadb.de/getmatchdata/bl1/2024");
+  const data = await res.json();
+
+  return data.slice(0, 10).map(m => `
+    <div class="match">
+      <div class="small">${m.matchDateTime}</div>
+      <div class="score">
+        <span>${m.team1.teamName}</span>
+        <span>${m.matchResults?.slice(-1)[0]?.pointsTeam1 ?? 0} - ${m.matchResults?.slice(-1)[0]?.pointsTeam2 ?? 0}</span>
+        <span>${m.team2.teamName}</span>
+      </div>
+    </div>
+  `).join("");
+}
+
+/* 🌍 بيانات تجريبية لباقي الدوريات */
+function loadMock(){
+  return `
+    <div class="match">
+      <div class="small">API غير متاح مجاناً لهذه الدوريات</div>
+      <div class="score">
+        <span>Team A</span>
+        <span>0 - 0</span>
+        <span>Team B</span>
+      </div>
+    </div>
+    <div class="match">
+      <div class="small">اربط API احترافي لاحقاً</div>
+      <div class="score">
+        <span>Team C</span>
+        <span>1 - 2</span>
+        <span>Team D</span>
+      </div>
+    </div>
+  `;
+}
+
+async function load(){
+  const app = document.getElementById("app");
+  app.innerHTML = "جاري التحميل...";
+
+  try{
+    if(league === "germany"){
+      app.innerHTML = await loadGermany();
+    } else {
+      app.innerHTML = loadMock();
     }
+  } catch(e){
+    app.innerHTML = "خطأ في تحميل البيانات ⚠️";
+  }
+}
 
-    async function loadMatches() {
-        const div = document.getElementById('m-view');
-        div.innerHTML = "<p style='text-align:center;'>تحديث البيانات...</p>";
-        try {
-            const data = await fetchJSON(`/competitions/${league}/matches`);
-            const today = new Date().toISOString().split('T')[0];
-            const matches = data.matches.filter(m => m.utcDate.includes(today));
-            
-            if(matches.length === 0) {
-                div.innerHTML = "<p style='text-align:center;'>لا توجد مباريات جارية اليوم.</p>";
-                return;
-            }
-
-            div.innerHTML = matches.map(m => `
-                <div class="match-box">
-                    <div style="font-size:12px; color:#8b949e;">${m.status === 'FINISHED' ? 'منتهية' : 'مباشر/قريباً'}</div>
-                    <div class="score-row">
-                        <span>${m.homeTeam.shortName}</span>
-                        <span>${m.score.fullTime.home ?? 0} - ${m.score.fullTime.away ?? 0}</span>
-                        <span>${m.awayTeam.shortName}</span>
-                    </div>
-                </div>
-            `).join('');
-        } catch(e) { div.innerHTML = "خطأ! تأكد من اتصال الإنترنت."; }
-    }
-
-    async function loadScorers() {
-        const div = document.getElementById('s-view');
-        div.innerHTML = "<p style='text-align:center;'>جلب القائمة...</p>";
-        try {
-            const data = await fetchJSON(`/competitions/${league}/scorers`);
-            div.innerHTML = data.scorers.map((s, i) => `
-                <div class="scorer-row">
-                    <span><span class="rank">${i+1}</span> ${s.player.name}</span>
-                    <span style="color:#3fb950; font-weight:900;">${s.goals} ⚽</span>
-                </div>
-            `).join('');
-        } catch(e) { div.innerHTML = "فشل تحميل الهدافين."; }
-    }
-
-    function setLeague(code, btn) {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        league = code;
-        loadMatches(); loadScorers();
-    }
-
-    function show(type, btn) {
-        document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
-        btn.classList.add('active');
-        if(type === 'm') {
-            document.getElementById('m-view').classList.remove('hide');
-            document.getElementById('s-view').classList.add('hide');
-            loadMatches();
-        } else {
-            document.getElementById('m-view').classList.add('hide');
-            document.getElementById('s-view').classList.remove('hide');
-            loadScorers();
-        }
-    }
-
-    window.onload = loadMatches;
+load();
 </script>
+
 </body>
 </html>
