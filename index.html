@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MOHaKORA PRO V2</title>
+<title>MOHAKORA PRO MAX</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
 
@@ -24,8 +24,8 @@ body{
 }
 
 header{
-  text-align:center;
   padding:18px;
+  text-align:center;
   font-size:22px;
   font-weight:900;
   background:#010409;
@@ -46,7 +46,6 @@ header{
   border-radius:20px;
   cursor:pointer;
   white-space:nowrap;
-  font-weight:700;
 }
 
 .tab.active{
@@ -61,103 +60,121 @@ header{
   border:1px solid #30363d;
 }
 
-.match{
+.item{
   padding:10px;
   border-bottom:1px solid #30363d;
 }
 
-.score{
-  font-size:20px;
-  font-weight:900;
-  color:var(--green);
+.row{
   display:flex;
   justify-content:space-between;
+  font-weight:900;
 }
 
 .small{
   font-size:12px;
   color:#aaa;
 }
-
 </style>
 </head>
 
 <body>
 
-<header>⚽ MOHAKORA PRO V2</header>
+<header>⚽ MOHAKORA PRO MAX</header>
 
 <div class="tabs">
-  <div class="tab active" onclick="setLeague('germany')">🇩🇪 البوندسليغا</div>
-  <div class="tab" onclick="setLeague('mock')">🌍 باقي الدوريات</div>
+  <div class="tab active" onclick="setLeague('PL')">🇬🇧 PL</div>
+  <div class="tab" onclick="setLeague('PD')">🇪🇸 PD</div>
+  <div class="tab" onclick="setLeague('SA')">🇮🇹 SA</div>
+  <div class="tab" onclick="setLeague('BL1')">🇩🇪 BL1</div>
+  <div class="tab" onclick="setLeague('FL1')">🇫🇷 FL1</div>
 </div>
 
-<div id="app" class="box">جاري التحميل...</div>
+<div id="matches" class="box">جاري تحميل المباريات...</div>
+<div id="table" class="box">جاري تحميل الترتيب...</div>
 
 <script>
-let league = "germany";
+const API_KEY = "PUT_YOUR_API_KEY_HERE";
 
+let league = "PL";
+
+/* 🔥 API CORE */
+async function fetchAPI(url){
+  const res = await fetch("https://api.football-data.org/v4" + url, {
+    headers: { "X-Auth-Token": API_KEY }
+  });
+
+  if(!res.ok){
+    throw new Error("API ERROR " + res.status);
+  }
+
+  return await res.json();
+}
+
+/* 🏟️ MATCHES */
+async function loadMatches(){
+  const div = document.getElementById("matches");
+  div.innerHTML = "جاري تحميل المباريات...";
+
+  try{
+    const data = await fetchAPI(`/competitions/${league}/matches`);
+
+    const matches = data.matches.slice(0, 10);
+
+    div.innerHTML = "<h3>🏟️ المباريات</h3>" +
+    matches.map(m => `
+      <div class="item">
+        <div class="small">${m.utcDate}</div>
+        <div class="row">
+          <span>${m.homeTeam.name}</span>
+          <span>${m.score.fullTime.home ?? 0} - ${m.score.fullTime.away ?? 0}</span>
+          <span>${m.awayTeam.name}</span>
+        </div>
+      </div>
+    `).join("");
+
+  }catch(e){
+    div.innerHTML = "خطأ في تحميل المباريات ⚠️";
+  }
+}
+
+/* 📊 STANDINGS */
+async function loadTable(){
+  const div = document.getElementById("table");
+  div.innerHTML = "جاري تحميل الترتيب...";
+
+  try{
+    const data = await fetchAPI(`/competitions/${league}/standings`);
+
+    const table = data.standings[0].table;
+
+    div.innerHTML = "<h3>📊 الترتيب</h3>" +
+    table.map((t,i)=>`
+      <div class="item">
+        <div class="row">
+          <span>${i+1}. ${t.team.name}</span>
+          <span style="color:var(--green)">${t.points} pt</span>
+        </div>
+      </div>
+    `).join("");
+
+  }catch(e){
+    div.innerHTML = "خطأ في تحميل الترتيب ⚠️";
+  }
+}
+
+/* 🔁 SWITCH LEAGUE */
 function setLeague(l){
   league = l;
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   event.target.classList.add('active');
-  load();
+
+  loadMatches();
+  loadTable();
 }
 
-/* 🔥 API حقيقي بدون مفتاح */
-async function loadGermany(){
-  const res = await fetch("https://api.openligadb.de/getmatchdata/bl1/2024");
-  const data = await res.json();
-
-  return data.slice(0, 10).map(m => `
-    <div class="match">
-      <div class="small">${m.matchDateTime}</div>
-      <div class="score">
-        <span>${m.team1.teamName}</span>
-        <span>${m.matchResults?.slice(-1)[0]?.pointsTeam1 ?? 0} - ${m.matchResults?.slice(-1)[0]?.pointsTeam2 ?? 0}</span>
-        <span>${m.team2.teamName}</span>
-      </div>
-    </div>
-  `).join("");
-}
-
-/* 🌍 بيانات تجريبية لباقي الدوريات */
-function loadMock(){
-  return `
-    <div class="match">
-      <div class="small">API غير متاح مجاناً لهذه الدوريات</div>
-      <div class="score">
-        <span>Team A</span>
-        <span>0 - 0</span>
-        <span>Team B</span>
-      </div>
-    </div>
-    <div class="match">
-      <div class="small">اربط API احترافي لاحقاً</div>
-      <div class="score">
-        <span>Team C</span>
-        <span>1 - 2</span>
-        <span>Team D</span>
-      </div>
-    </div>
-  `;
-}
-
-async function load(){
-  const app = document.getElementById("app");
-  app.innerHTML = "جاري التحميل...";
-
-  try{
-    if(league === "germany"){
-      app.innerHTML = await loadGermany();
-    } else {
-      app.innerHTML = loadMock();
-    }
-  } catch(e){
-    app.innerHTML = "خطأ في تحميل البيانات ⚠️";
-  }
-}
-
-load();
+loadMatches();
+loadTable();
 </script>
 
 </body>
