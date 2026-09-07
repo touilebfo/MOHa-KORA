@@ -1,209 +1,734 @@
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html b:css='false' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2050/bml/retd' xmlns:data='http://www.google.com/2050/bml/data' xmlns:expr='http://www.google.com/2050/bml/expr'>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bundesliga PRO MAX</title>
+  <meta charset='UTF-8'/>
+  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' name='viewport'/>
+  <title>For Ritedj | Infinite Universe</title>
+  <link href='https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&amp;family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;display=swap' rel='stylesheet'/>
+  
+  <b:skin><![CDATA[
+    /* Blogger System Reset */
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    .navbar, .page-header, .sidebar-container, .blog-feeds, .post-footer, #header-wrapper, #sidebar-wrapper, #footer-wrapper {
+      display: none !important;
+    }
+  ]]></b:skin>
 
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #030308;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent-cyan: #00f0ff;
+      --accent-pink: #ff007f;
+      --accent-purple: #8a2be2;
+      --accent-gold: #ffd700;
+      --text-main: #f0f4f8;
+      --text-muted: #94a3b8;
+      --glow-cyan: 0 0 25px rgba(0, 240, 255, 0.4);
+      --glow-pink: 0 0 25px rgba(255, 0, 127, 0.4);
+      --glow-gold: 0 0 25px rgba(255, 215, 0, 0.4);
+    }
 
-<style>
-body{
-margin:0;
-font-family:Cairo;
-background:#0d1117;
-color:#fff;
-}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-header{
-padding:18px;
-text-align:center;
-font-size:22px;
-font-weight:900;
-background:#010409;
-border-bottom:2px solid #ff3b3b;
-}
+    body {
+      background-color: var(--bg) !important;
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
 
-.tabs{
-display:flex;
-gap:8px;
-padding:10px;
-overflow-x:auto;
-background:#161b22;
-}
+    #canvas-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
 
-.tab{
-padding:8px 14px;
-background:#21262d;
-border:1px solid #30363d;
-border-radius:20px;
-cursor:pointer;
-white-space:nowrap;
-font-weight:700;
-}
+    .app-container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 1.25rem 1rem 4rem;
+    }
 
-.tab.active{
-background:#ff3b3b;
-}
+    header {
+      text-align: center;
+      padding: 2.5rem 0.5rem 2rem;
+      position: relative;
+    }
 
-.box{
-margin:10px;
-padding:12px;
-background:#161b22;
-border-radius:12px;
-}
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 1.1rem;
+      border-radius: 50px;
+      background: rgba(0, 240, 255, 0.06);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      color: var(--accent-cyan);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--glow-cyan);
+    }
 
-.item{
-padding:10px;
-border-bottom:1px solid #30363d;
-}
+    .badge .pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      box-shadow: var(--glow-cyan);
+      animation: pulse 1.5s infinite alternate;
+    }
 
-.row{
-display:flex;
-justify-content:space-between;
-font-weight:900;
-}
+    @keyframes pulse {
+      0% { opacity: 0.3; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1.3); }
+    }
 
-.small{font-size:12px;color:#aaa}
-.green{color:#2ecc71}
-.gold{color:#f1c40f}
-.red{color:#ff3b3b}
-</style>
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2.6rem, 9vw, 4.8rem);
+      font-weight: 700;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #ffffff 10%, #a5b4fc 50%, var(--accent-pink) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.8rem;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: clamp(0.88rem, 3.5vw, 1.05rem);
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.6;
+      font-weight: 300;
+      padding: 0 0.5rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      margin-top: 2rem;
+    }
+
+    @media (min-width: 680px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+      }
+      .span-2 {
+        grid-column: span 2;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 22px;
+      padding: 1.5rem;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card:active {
+      transform: scale(0.985);
+    }
+
+    @media (min-width: 1024px) {
+      .card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(0, 240, 255, 0.3);
+        box-shadow: 0 12px 35px -10px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    .card-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.15rem;
+      color: #fff;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .card-title .icon-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      box-shadow: var(--glow-cyan);
+      flex-shrink: 0;
+    }
+
+    .card-desc {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+
+    .note-box {
+      min-height: 105px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #f1f5f9;
+      font-style: italic;
+      padding: 1.25rem 1rem;
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 14px;
+      border-left: 3px solid var(--accent-pink);
+      margin-bottom: 1rem;
+      transition: opacity 0.3s ease;
+    }
+
+    .scanner-box {
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 16px;
+      padding: 1.25rem;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .fingerprint-btn {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 1rem;
+      border-radius: 50%;
+      background: rgba(255, 0, 127, 0.08);
+      border: 2px dashed var(--accent-pink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.8rem;
+      transition: all 0.3s ease;
+      touch-action: manipulation;
+    }
+
+    .fingerprint-btn:active, .fingerprint-btn.scanning {
+      background: rgba(255, 0, 127, 0.25);
+      border-style: solid;
+      box-shadow: var(--glow-pink);
+      transform: scale(1.05);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 0.75rem;
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink), var(--accent-cyan));
+      border-radius: 10px;
+      transition: width 0.1s linear;
+    }
+
+    .constellation-box {
+      position: relative;
+      height: 140px;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .star-point {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: var(--accent-gold);
+      border-radius: 50%;
+      box-shadow: var(--glow-gold);
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .star-point:active {
+      transform: scale(1.5);
+    }
+
+    .wish-display {
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 14px;
+      padding: 1rem;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--accent-cyan);
+      margin-bottom: 1rem;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 0.85rem;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(255, 0, 127, 0.22), rgba(138, 43, 226, 0.22));
+      border: 1px solid rgba(255, 0, 127, 0.4);
+      color: #fff;
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 0.8rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      touch-action: manipulation;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-cyan {
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.18), rgba(138, 43, 226, 0.18));
+      border-color: rgba(0, 240, 255, 0.4);
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.18), rgba(255, 0, 127, 0.18));
+      border-color: rgba(255, 215, 0, 0.4);
+      color: #fff;
+    }
+
+    .vault-input {
+      width: 100%;
+      padding: 0.85rem;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      color: #fff;
+      font-family: inherit;
+      outline: none;
+      transition: border 0.3s ease;
+      text-align: center;
+      letter-spacing: 2px;
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .vault-input:focus {
+      border-color: var(--accent-cyan);
+    }
+
+    .audio-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      background: linear-gradient(135deg, rgba(138, 43, 226, 0.12), rgba(0, 240, 255, 0.12));
+      border-color: rgba(138, 43, 226, 0.3);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(150%);
+      background: rgba(10, 10, 20, 0.92);
+      border: 1px solid var(--accent-cyan);
+      padding: 0.85rem 1.4rem;
+      border-radius: 50px;
+      color: #fff;
+      font-size: 0.85rem;
+      box-shadow: var(--glow-cyan);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 100;
+      white-space: nowrap;
+      backdrop-filter: blur(10px);
+    }
+
+    .toast.visible {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 3.5rem;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+  </style>
 </head>
-
 <body>
 
-<header>⚽ Bundesliga PRO MAX</header>
+  <!-- Required Blogger Section -->
+  <b:section id='main' showelement='yes'>
+    <b:widget id='Blog1' locked='true' title='Blog Posts' type='Blog'/>
+  </b:section>
 
-<div class="tabs">
-<div class="tab active" onclick="setView('today',this)">اليوم</div>
-<div class="tab" onclick="setView('yesterday',this)">أمس</div>
-<div class="tab" onclick="setView('tomorrow',this)">غداً</div>
-<div class="tab" onclick="setView('table',this)">الترتيب</div>
-<div class="tab" onclick="setView('scorers',this)">الهدافين</div>
-</div>
+  <canvas id='canvas-bg'></canvas>
 
-<div id="app" class="box">جاري التحميل...</div>
+  <div class='app-container'>
+    <header>
+      <div class='badge'>
+        <span class='pulse-dot'></span>
+        Dedicated to Ritedj
+      </div>
+      <h1>Ritedj</h1>
+      <p class='subtitle'>A timeless universe created exclusively for you. Touch, tap, and explore your custom dynamic space.</p>
+    </header>
 
-<script>
+    <div class='grid'>
 
-let view="today";
+      <div class='card'>
+        <div>
+          <div class='card-title'>
+            <span class='icon-dot' style='background: var(--accent-pink); box-shadow: var(--glow-pink);'></span>
+            Why You Are Special #<span id='note-index'>1</span>
+          </div>
+          <div class='note-box' id='note-display'>
+            "Your presence turns ordinary moments into unforgettable memories."
+          </div>
+        </div>
+        <button class='btn' onclick='nextNote()'>Discover Another Reason</button>
+      </div>
 
-/* 🔥 API */
-async function getMatches(){
-const res=await fetch("https://api.openligadb.de/getmatchdata/bl1/2026");
-return await res.json();
-}
+      <div class='card'>
+        <div>
+          <div class='card-title'>
+            <span class='icon-dot'></span>
+            Affinity Scanner
+          </div>
+          <p class='card-desc'>Hold your finger on the sensor below to scan our connection balance.</p>
+          <div class='scanner-box'>
+            <div class='fingerprint-btn' id='scan-btn' onmousedown='startScan()' onmouseleave='endScan()' onmouseup='endScan()' ontouchend='endScan()' ontouchstart='startScan()'>
+              ✨
+            </div>
+            <div id='scan-status' style='font-size: 0.8rem; color: var(--text-muted);'>Hold sensor to scan</div>
+            <div class='progress-bar'>
+              <div class='progress-fill' id='scan-progress'></div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-async function getTable(){
-const res=await fetch("https://api.openligadb.de/getbltable/bl1");
-return await res.json();
-}
+      <div class='card'>
+        <div>
+          <div class='card-title'>
+            <span class='icon-dot' style='background: var(--accent-gold); box-shadow: var(--glow-gold);'></span>
+            Star Map of Us
+          </div>
+          <p class='card-desc'>Tap the stars in Ritedj's sky to reveal unique attributes.</p>
+          <div class='constellation-box' id='constellation'>
+          </div>
+        </div>
+      </div>
 
-async function getScorers(){
-const res=await fetch("https://api.openligadb.de/getgoalgetters/bl1/2024");
-return await res.json();
-}
+      <div class='card'>
+        <div>
+          <div class='card-title'>
+            <span class='icon-dot' style='background: var(--accent-purple);'></span>
+            Wish Jar for Ritedj
+          </div>
+          <p class='card-desc'>Pull a promise or future dream out of the digital jar.</p>
+          <div class='wish-display' id='wish-display'>
+            ✨ Tap below to draw a wish from the jar...
+          </div>
+        </div>
+        <button class='btn btn-gold' onclick='drawWish()'>Draw A Wish</button>
+      </div>
 
-/* 📅 DATE */
-function getDate(type){
-const d=new Date();
+      <div class='card'>
+        <div>
+          <div class='card-title'>
+            <span class='icon-dot'></span>
+            Send Signal to Ritedj
+          </div>
+          <p class='card-desc'>Send a floating wave of energy particles across the screen for Ritedj.</p>
+        </div>
+        <button class='btn btn-cyan' onclick='triggerBurst()'>Send Floating Energy</button>
+      </div>
 
-if(type==="today") return d.toISOString().split("T")[0];
+      <div class='card'>
+        <div>
+          <div class='card-title'>
+            <span class='icon-dot' style='background: var(--accent-pink); box-shadow: var(--glow-pink);'></span>
+            Private Message Vault
+          </div>
+          <p class='card-desc'>Enter our passkey to read a secret message written for Ritedj.</p>
+          <input class='vault-input' id='vault-pass' onkeyup='checkVault(this)' placeholder='Type key...' type='password'/>
+          <p id='vault-result' style='font-size: 0.85rem; color: var(--accent-cyan); text-align: center; min-height: 1.2em;'></p>
+        </div>
+      </div>
 
-if(type==="yesterday"){
-d.setDate(d.getDate()-1);
-return d.toISOString().split("T")[0];
-}
+      <div class='card span-2 audio-card'>
+        <div>
+          <div class='card-title' style='margin-bottom: 0.2rem;'>
+            <span class='icon-dot'></span>
+            Background Atmosphere
+          </div>
+          <span style='color: var(--text-muted); font-size: 0.8rem;'>Calming cosmic soundscape</span>
+        </div>
+        <button class='btn btn-cyan' id='audio-btn' onclick='toggleAudio()' style='width: auto; margin: 0; padding: 0.65rem 1.2rem; min-width: 130px;'>Play Atmosphere</button>
+      </div>
 
-if(type==="tomorrow"){
-d.setDate(d.getDate()+1);
-return d.toISOString().split("T")[0];
-}
-}
+    </div>
 
-/* 🏟️ FILTER */
-function filterByDate(data,type){
-const target=getDate(type);
+    <footer>
+      Crafted with infinite love for Ritedj
+    </footer>
+  </div>
 
-return data.filter(m=>{
-const date=m.matchDateTime?.split("T")[0];
-return date===target;
-});
-}
+  <div class='toast' id='toast'>Signal sent successfully</div>
 
-/* 🔁 LOAD */
-async function load(){
+  <script type='text/javascript'>
+    //<![CDATA[
+    const canvas = document.getElementById('canvas-bg');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let particles = [];
 
-const app=document.getElementById("app");
-app.innerHTML="جاري التحميل...";
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
 
-if(view==="table"){
-const data=await getTable();
+    class Particle {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.size = Math.random() * 2 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.3;
+        this.speedY = (Math.random() - 0.5) * 0.3;
+        this.alpha = Math.random() * 0.6 + 0.2;
+        this.color = Math.random() > 0.5 ? '0, 240, 255' : '255, 0, 127';
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > width || this.y < 0 || this.y > height) this.reset();
+      }
+      draw() {
+        ctx.fillStyle = `rgba(${this.color}, ${this.alpha})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
 
-app.innerHTML=data.map((t,i)=>`
-<div class="item">
-<div class="row">
-<span>${i+1}. ${t.teamName}</span>
-<span class="green">${t.points} pt</span>
-</div>
-</div>
-`).join("");
-return;
-}
+    const particleCount = window.innerWidth < 600 ? 35 : 75;
+    for (let i = 0; i < particleCount; i++) particles.push(new Particle());
 
-if(view==="scorers"){
-const data=await getScorers();
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      requestAnimationFrame(animate);
+    }
+    animate();
 
-app.innerHTML=data.slice(0,15).map((s,i)=>`
-<div class="item">
-<div class="row">
-<span>${i+1}. ${s.goalGetterName}</span>
-<span class="gold">${s.goalCount} ⚽</span>
-</div>
-</div>
-`).join("");
-return;
-}
+    const notes = [
+      "Your presence turns ordinary moments into unforgettable memories.",
+      "The warmth and gentle energy you bring into my life.",
+      "Your smile is effortlessly bright and always genuine.",
+      "The way you make every conversation feel comfortable and special.",
+      "Your mind, your beauty, and everything that makes you unique.",
+      "Being around you simply makes everything feel right."
+    ];
+    let noteIdx = 0;
 
-const data=await getMatches();
-const filtered=filterByDate(data,view);
+    function nextNote() {
+      noteIdx = (noteIdx + 1) % notes.length;
+      const display = document.getElementById('note-display');
+      display.style.opacity = '0';
+      setTimeout(() => {
+        display.innerText = `"${notes[noteIdx]}"`;
+        display.style.opacity = '1';
+        document.getElementById('note-index').innerText = noteIdx + 1;
+      }, 200);
+    }
 
-if(filtered.length===0){
-app.innerHTML="<p class='red'>لا توجد مباريات لهذا اليوم</p>";
-return;
-}
+    let scanTimer = null;
+    let scanProgress = 0;
 
-app.innerHTML=filtered.slice(0,10).map(m=>`
-<div class="item">
-<div class="small">${m.matchDateTime}</div>
-<div class="row">
-<span>${m.team1.teamName}</span>
-<span class="gold">
-${m.matchResults?.slice(-1)[0]?.pointsTeam1 ?? 0}
--
-${m.matchResults?.slice(-1)[0]?.pointsTeam2 ?? 0}
-</span>
-<span>${m.team2.teamName}</span>
-</div>
-</div>
-`).join("");
-}
+    function startScan() {
+      const btn = document.getElementById('scan-btn');
+      const bar = document.getElementById('scan-progress');
+      const status = document.getElementById('scan-status');
+      btn.classList.add('scanning');
+      status.innerText = "Scanning connection...";
 
-/* 🔁 SWITCH */
-function setView(v,el){
-view=v;
-document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-el.classList.add("active");
-load();
-}
+      scanProgress = 0;
+      scanTimer = setInterval(() => {
+        scanProgress += 4;
+        bar.style.width = scanProgress + "%";
+        if (scanProgress >= 100) {
+          clearInterval(scanTimer);
+          status.innerHTML = "<span style='color: var(--accent-pink); font-weight:600;'>100% Perfect Match for Ritedj ❤️</span>";
+          showToast("Match Confirmed: Infinite Harmony");
+        }
+      }, 50);
+    }
 
-/* 🔄 AUTO REFRESH (Live feel) */
-setInterval(load,30000);
+    function endScan() {
+      const btn = document.getElementById('scan-btn');
+      btn.classList.remove('scanning');
+      if (scanProgress < 100) {
+        clearInterval(scanTimer);
+        document.getElementById('scan-progress').style.width = "0%";
+        document.getElementById('scan-status').innerText = "Hold sensor to scan";
+      }
+    }
 
-load();
+    const starData = [
+      { top: "25%", left: "20%", text: "Kindness" },
+      { top: "60%", left: "40%", text: "Elegance" },
+      { top: "30%", left: "70%", text: "Pure Soul" },
+      { top: "75%", left: "80%", text: "Brilliance" }
+    ];
 
-</script>
+    const constellationBox = document.getElementById('constellation');
+    starData.forEach(star => {
+      const el = document.createElement('div');
+      el.className = 'star-point';
+      el.style.top = star.top;
+      el.style.left = star.left;
+      el.onclick = () => showToast(`Ritedj's Star: ${star.text}`);
+      constellationBox.appendChild(el);
+    });
 
+    const wishes = [
+      "🌊 A serene trip to the coastline together.",
+      "☕ Late night coffee and calm conversations.",
+      "🌌 Stargazing away from the city lights.",
+      "✨ Endless laughing moments shared together."
+    ];
+
+    function drawWish() {
+      const randomWish = wishes[Math.floor(Math.random() * wishes.length)];
+      document.getElementById('wish-display').innerText = randomWish;
+    }
+
+    function triggerBurst() {
+      for (let i = 0; i < 25; i++) {
+        const p = new Particle();
+        p.x = width / 2;
+        p.y = height / 2;
+        p.speedX = (Math.random() - 0.5) * 7;
+        p.speedY = (Math.random() - 0.5) * 7;
+        p.size = Math.random() * 4 + 2;
+        p.alpha = 1;
+        particles.push(p);
+      }
+      showToast("Floating energy sent to Ritedj ✨");
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.innerText = msg;
+      toast.classList.add('visible');
+      setTimeout(() => toast.classList.remove('visible'), 3000);
+    }
+
+    function checkVault(input) {
+      const val = input.value.toLowerCase().trim();
+      const res = document.getElementById('vault-result');
+      if (val === "ritedj" || val === "love") {
+        res.innerText = "🔓 Unlocked: You are my greatest adventure and my safest place.";
+        res.style.color = "var(--accent-pink)";
+      } else if (val.length > 0) {
+        res.innerText = "Locked";
+        res.style.color = "var(--text-muted)";
+      } else {
+        res.innerText = "";
+      }
+    }
+
+    let audioCtx = null;
+    let isPlaying = false;
+    let osc1, osc2, gainNode;
+
+    function toggleAudio() {
+      const btn = document.getElementById('audio-btn');
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+
+      if (!isPlaying) {
+        osc1 = audioCtx.createOscillator();
+        osc2 = audioCtx.createOscillator();
+        gainNode = audioCtx.createGain();
+
+        osc1.type = 'sine';
+        osc2.type = 'sine';
+        osc1.frequency.setValueAtTime(220, audioCtx.currentTime); 
+        osc2.frequency.setValueAtTime(277.18, audioCtx.currentTime); 
+
+        gainNode.gain.setValueAtTime(0.01, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.08, audioCtx.currentTime + 2);
+
+        osc1.connect(gainNode);
+        osc2.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        osc1.start();
+        osc2.start();
+        isPlaying = true;
+        btn.innerText = "Pause Atmosphere";
+      } else {
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1);
+        setTimeout(() => {
+          osc1.stop();
+          osc2.stop();
+          isPlaying = false;
+          btn.innerText = "Play Atmosphere";
+        }, 1000);
+      }
+    }
+    //]]>
+  </script>
 </body>
 </html>
